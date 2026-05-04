@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- CWE-1021: missing X-Frame-Options / CSP frame-ancestors -->
+  <!-- CWE-693: no Content-Security-Policy header -->
+  <title>Vulnerable App</title>
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+</head>
+<body>
+
+  <h1>User Search</h1>
+
+  <!-- CWE-79: XSS — search term reflected into DOM without encoding -->
+  <div id="search-results"></div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('q');
+    // CWE-79: direct innerHTML assignment with unsanitised user input
+    document.getElementById('search-results').innerHTML = 'Results for: ' + query;
+  </script>
+
+  <!-- CWE-79: XSS via document.write -->
+  <script>
+    const username = params.get('user');
+    document.write('<h2>Welcome, ' + username + '</h2>');  // CWE-79
+  </script>
+
+  <!-- CWE-601: open redirect — destination from URL param without validation -->
+  <script>
+    const redirect = params.get('redirect');
+    if (redirect) {
+      window.location.href = redirect;   // CWE-601: open redirect
+    }
+  </script>
+
+  <!-- CWE-352: no CSRF protection on form -->
+  <form id="transfer-form" action="/api/transfer" method="POST">
+    <input type="hidden" name="amount" value="1000">
+    <input type="hidden" name="to_account" value="">
+    <!-- No CSRF token — CWE-352 -->
+    <button type="submit">Transfer Funds</button>
+  </form>
+
+  <!-- CWE-79: postMessage handler without origin check -->
+  <script>
+    window.addEventListener('message', function(event) {
+      // CWE-79: no event.origin validation
+      document.getElementById('search-results').innerHTML = event.data;
+    });
+  </script>
+
+</body>
+</html>
