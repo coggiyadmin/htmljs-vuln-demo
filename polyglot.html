@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!--
+  Combination #12 — POLYGLOT (HTML + embedded JS). Taint flows within a <script>
+  block embedded in HTML: location.hash / location.search → DOM-XSS sink.
+  The engine must analyze JS inside HTML. NO finding = FALSE NEGATIVE.
+-->
+<html lang="en">
+<head><meta charset="utf-8"><title>Polyglot</title></head>
+<body>
+  <div id="out"></div>
+
+  <script>
+    // DOM source → DOM-XSS sink, inside an embedded <script>
+    const frag = location.hash.slice(1);        // SOURCE: location.hash
+    document.getElementById('out').innerHTML = frag;   // SINK: innerHTML (CWE-79)
+
+    const q = new URLSearchParams(location.search).get('q'); // SOURCE: location.search
+    document.write('<p>' + q + '</p>');          // SINK: document.write (CWE-79)
+  </script>
+
+  <script>
+    // second embedded block: eval of a URL fragment
+    const code = decodeURIComponent(location.hash.slice(1));
+    eval(code);                                  // SINK: eval (CWE-94)
+  </script>
+</body>
+</html>
