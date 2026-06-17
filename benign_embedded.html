@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!--
+  BENIGN-BASELINE — htmljs specificity probe.
+  Static embedded script with no user-controlled sources or dangerous sinks.
+  Scanner MUST produce ZERO security findings.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+  <title>Benign embedded script</title>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <div id="out">Ready</div>
+  <script>
+    const status = 'ok';
+    document.getElementById('out').textContent = status;
+    document.querySelector('h1').addEventListener('click', () => {
+      console.log('refresh');
+    });
+  </script>
+</body>
+</html>

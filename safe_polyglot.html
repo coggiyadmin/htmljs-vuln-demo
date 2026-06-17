@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!--
+  SAFE MIRROR — combination #12 polyglot (HTML + embedded JS).
+  Same DOM sources as polyglot.html; sinks hardened (textContent, encodeURIComponent, no eval).
+-->
+<html lang="en">
+<head><meta charset="utf-8"><title>Safe polyglot</title></head>
+<body>
+  <div id="out"></div>
+  <p id="query"></p>
+
+  <script>
+    const frag = location.hash.slice(1);
+    document.getElementById('out').textContent = frag;
+
+    const q = new URLSearchParams(location.search).get('q') || '';
+    const el = document.getElementById('query');
+    el.textContent = q;
+  </script>
+
+  <script>
+    const raw = decodeURIComponent(location.hash.slice(1) || '');
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.mode === 'string' && parsed.mode === 'view') {
+        document.title = 'view';
+      }
+    } catch (_) {
+      /* ignore malformed fragment */
+    }
+  </script>
+</body>
+</html>
