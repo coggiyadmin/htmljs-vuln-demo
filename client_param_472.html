@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!-- CWE-472 — External control of assumed-immutable web parameter (param tampering).
+     Tier-A CWE-699 probe. The price/total is taken from a client-controlled hidden
+     field and used as authoritative for the charge, so the user can tamper it to
+     pay an arbitrary amount. Expected today: likely FN (client-trust rule is a gap). -->
+<html>
+<body>
+  <form id="checkout" action="/api/charge" method="post">
+    <!-- Client-controlled "immutable" values trusted by the handler below. -->
+    <input type="hidden" name="price" value="49.99">
+    <input type="hidden" name="discount" value="0">
+    <button type="submit">Buy</button>
+  </form>
+  <script>
+    document.getElementById('checkout').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      // SOURCE: price/discount come from client-editable hidden fields.
+      const price = form.price.value;
+      const discount = form.discount.value;
+      const total = price - discount; // client computes the authoritative charge
+      // SINK (CWE-472): client-controlled total sent as the amount to charge.
+      fetch('/api/charge', { method: 'POST', body: JSON.stringify({ amount: total }) });
+    });
+  </script>
+</body>
+</html>
