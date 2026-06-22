@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!-- SAFE mirror of dom_context_838.html (CWE-838). The value is treated as data,
+     not code: it is bound through textContent / a function argument, never built
+     into a JS string and eval'd. ZERO security findings expected. -->
+<html>
+<body>
+  <div id="out"></div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const name = params.get('name'); // SOURCE
+
+    // Safe: pass the value as data to a function; no string-built code, no eval.
+    function greet(who) {
+      document.getElementById('out').textContent = 'Hello ' + who;
+    }
+    greet(name);
+  </script>
+</body>
+</html>

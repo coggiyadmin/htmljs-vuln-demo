@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!-- CWE-838 — Inappropriate encoding for output context. Tier-A CWE-699 probe.
+     The value is HTML-entity-escaped (correct for an HTML *body*) but then placed
+     into a *JavaScript* string context, where HTML escaping does nothing — the
+     attacker breaks out of the JS string. Wrong-context encoding = still XSS.
+     Expected today: likely FN (output-context rule is a gap). -->
+<html>
+<body>
+  <div id="out"></div>
+  <script>
+    // value arrives HTML-escaped from the server (e.g. &quot; &lt; &gt;)
+    const params = new URLSearchParams(location.search);
+    const name = params.get('name'); // SOURCE (already HTML-escaped server-side)
+
+    // SINK (CWE-838): HTML-escaping is the WRONG encoding for a JS string context;
+    // a payload like  ');evilFn('  is not neutralized by HTML entities.
+    const code = "greet('" + name + "')";
+    eval(code);
+  </script>
+</body>
+</html>
