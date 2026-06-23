@@ -1,0 +1,2 @@
+// TN — benign system prompt; constant, non-sensitive.
+function systemPrompt() { return 'You are a helpful assistant. Be concise and cite sources.'; }
