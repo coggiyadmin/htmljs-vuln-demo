@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<!-- XSS variant: DOM innerHTML from location.hash -->
+<html><body><div id="o"></div>
+<script>
+  const frag = location.hash.slice(1); // SOURCE
+  document.getElementById('o').innerHTML = frag; // SINK CWE-79
+</script></body></html>

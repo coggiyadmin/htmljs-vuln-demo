@@ -1,0 +1,6 @@
+<!DOCTYPE html>
+<!-- trust_boundary variant: sessionStorage as trusted client store -->
+<html><body><script>
+  const role = new URLSearchParams(location.search).get('role'); // SOURCE
+  sessionStorage.setItem('role', role); // SINK CWE-501
+</script></body></html>
