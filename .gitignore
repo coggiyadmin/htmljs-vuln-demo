@@ -1,0 +1,8 @@
+# web build artifacts
+node_modules/
+dist/
+build/
+
+# editor / backup
+*.swp
+*.bak
